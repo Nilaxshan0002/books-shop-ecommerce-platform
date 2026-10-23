@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
@@ -27,10 +27,16 @@ function Shop() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>(initial ?? "All");
   const [sort, setSort] = useState<Sort>("featured");
+  const [maxPrice, setMaxPrice] = useState("0");
+
+  useEffect(() => {
+    setCategory(initial ?? "All");
+  }, [initial]);
 
   const q = query.trim().toLowerCase();
   const results = books
     .filter((b) => category === "All" || b.category === category)
+    .filter((b) => maxPrice === "0" || b.price <= Number(maxPrice))
     .filter((b) => !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q))
     .sort((a, b) => {
       if (sort === "price-asc") return a.price - b.price;
@@ -58,6 +64,16 @@ function Shop() {
           <option value="price-asc">Price: Low to high</option>
           <option value="price-desc">Price: High to low</option>
           <option value="rating">Top rated</option>
+        </select>
+        <select
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="0">Any price</option>
+          <option value="11">Under $11</option>
+          <option value="13">Under $13</option>
+          <option value="15">Under $15</option>
         </select>
       </div>
 

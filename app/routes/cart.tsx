@@ -64,16 +64,8 @@ function CartPage() {
             <div className="flex justify-between"><span>Shipping</span><span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span></div>
             <div className="flex justify-between border-t border-border pt-3 text-base font-semibold"><span>Total</span><span>${(subtotal + shipping).toFixed(2)}</span></div>
           </div>
-          <Button
-            className="mt-6 w-full"
-            size="lg"
-            onClick={() => {
-              console.log("Order placed", lines.length);
-              clear();
-              toast({ title: "Order placed", description: "Thank you for shopping with Page & Ink." });
-            }}
-          >
-            Place order
+          <Button asChild className="mt-6 w-full" size="lg">
+            <Link to="/checkout">Go to checkout</Link>
           </Button>
         </aside>
       </div>
