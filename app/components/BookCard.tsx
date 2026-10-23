@@ -2,14 +2,22 @@ import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { BookCover } from "./BookCover";
 import { AddToCartButton } from "./AddToCartButton";
+import { WishlistButton } from "./WishlistButton";
 import type { Book } from "../data/books";
 
 export function BookCard({ book }: { book: Book }) {
   return (
     <div className="group flex flex-col">
-      <Link to="/books/$bookId" params={{ bookId: book.id }} className="block transition-opacity hover:opacity-90">
-        <BookCover book={book} />
-      </Link>
+      <div className="relative">
+        <Link
+          to="/books/$bookId"
+          params={{ bookId: book.id }}
+          className="block transition-transform duration-300 group-hover:-translate-y-1"
+        >
+          <BookCover book={book} />
+        </Link>
+        <WishlistButton book={book} className="absolute right-2 top-2" />
+      </div>
       <div className="mt-4 flex-1">
         <p className="text-xs uppercase tracking-wider text-accent">{book.category}</p>
         <Link to="/books/$bookId" params={{ bookId: book.id }} className="font-serif text-lg font-semibold leading-snug hover:underline">
@@ -17,7 +25,7 @@ export function BookCard({ book }: { book: Book }) {
         </Link>
         <p className="text-sm text-muted-foreground">{book.author}</p>
         <div className="mt-1 flex items-center gap-1 text-sm">
-          <Star className="w-4 h-4 fill-accent text-accent" />
+          <Star className="h-4 w-4 fill-accent text-accent" />
           {book.rating}
         </div>
       </div>

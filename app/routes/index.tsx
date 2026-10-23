@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Truck, ShieldCheck, Gift } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Truck, ShieldCheck, Gift } from "lucide-react";
+import { Hero } from "../components/Hero";
+import { GenreMarquee } from "../components/GenreMarquee";
+import { StatsStrip } from "../components/StatsStrip";
+import { Testimonials } from "../components/Testimonials";
+import { Newsletter } from "../components/Newsletter";
 import { BookCard } from "../components/BookCard";
-import { books, categories } from "../data/books";
+import { BookCover } from "../components/BookCover";
+import { AddToCartButton } from "../components/AddToCartButton";
+import { books, categories, getBook } from "../data/books";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,28 +30,18 @@ const perks = [
 
 function Index() {
   const featured = books.filter((b) => b.featured);
+  const topRated = [...books].sort((a, b) => b.rating - a.rating).slice(0, 4);
+  const pick = getBook("fellowship");
   return (
     <div>
-      <section className="bg-gradient-hero text-primary-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <p className="mb-3 text-sm uppercase tracking-widest text-primary-foreground/70">Independent bookshop</p>
-          <h1 className="max-w-2xl text-3xl font-bold sm:text-4xl md:text-5xl">Find your next favourite story.</h1>
-          <p className="mt-4 max-w-xl text-lg text-primary-foreground/80">
-            Hand-picked classics and modern favourites, shipped to your door.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" variant="secondary">
-              <Link to="/books">Browse the shop <ArrowRight className="ml-2 w-4 h-4" /></Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <Hero />
+      <GenreMarquee />
 
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-6 md:grid-cols-3">
           {perks.map((p) => (
             <div key={p.title} className="flex items-start gap-3">
-              <p.icon className="mt-1 w-5 h-5 text-accent" />
+              <p.icon className="mt-1 h-5 w-5 text-accent" />
               <div>
                 <p className="font-semibold">{p.title}</p>
                 <p className="text-sm text-muted-foreground">{p.text}</p>
@@ -65,6 +61,33 @@ function Index() {
         </div>
       </section>
 
+      {pick && (
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-8 rounded-2xl bg-secondary p-8 md:grid-cols-[200px_1fr]">
+            <div className="mx-auto w-40 md:w-full"><BookCover book={pick} /></div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-accent">Book of the month</p>
+              <h2 className="mt-1 text-2xl font-bold md:text-3xl">{pick.title}</h2>
+              <p className="text-muted-foreground">by {pick.author}</p>
+              <p className="mt-3 max-w-xl leading-relaxed">{pick.description}</p>
+              <div className="mt-5 flex items-center gap-4">
+                <span className="text-xl font-semibold">${pick.price.toFixed(2)}</span>
+                <AddToCartButton book={pick} />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <StatsStrip />
+
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <h2 className="mb-8 text-2xl font-bold md:text-3xl">Top rated</h2>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {topRated.map((b) => <BookCard key={b.id} book={b} />)}
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <h2 className="mb-6 text-2xl font-bold md:text-3xl">Browse by genre</h2>
         <div className="flex flex-wrap gap-3">
@@ -73,13 +96,16 @@ function Index() {
               key={c}
               to="/books"
               search={{ category: c }}
-              className="rounded-full border border-border bg-card px-5 py-2 text-sm font-medium hover:bg-secondary"
+              className="rounded-full border border-border bg-card px-5 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
             >
               {c}
             </Link>
           ))}
         </div>
       </section>
+
+      <Testimonials />
+      <Newsletter />
     </div>
   );
 }
